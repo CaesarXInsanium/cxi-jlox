@@ -12,4 +12,9 @@ class Token {
     this.literal = literal;
     this.line = line;
   }
+
+  public String toString() {
+    return "Type: " + this.type + "\tLexeme: " + this.lexeme +
+        "\tLine: " + line;
+  }
 }

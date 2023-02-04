@@ -1,0 +1,3 @@
+#! /bin/sh
+make
+java -cp classes jlox.Lox $@

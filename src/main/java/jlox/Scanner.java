@@ -34,9 +34,7 @@ class Scanner {
     keywords.put("while", TokenType.WHILE);
   }
 
-  Scanner(String source) {
-    this.source = source;
-  }
+  Scanner(String source) { this.source = source; }
 
   public List<Token> scanTokens() {
     while (!isAtEnd()) {
@@ -50,78 +48,78 @@ class Scanner {
   private void scanToken() {
     char c = advance();
     switch (c) {
-      case '(':
-        addToken(TokenType.LEFT_PAREN);
-        break;
-      case ')':
-        addToken(TokenType.RIGHT_PAREN);
-        break;
-      case '{':
-        addToken(TokenType.LEFT_BRACE);
-        break;
-      case '}':
-        addToken(TokenType.RIGHT_BRACE);
-        break;
-      case ',':
-        addToken(TokenType.COMMA);
-        break;
-      case '.':
-        addToken(TokenType.DOT);
-        break;
-      case '-':
-        addToken(TokenType.MINUS);
-        break;
-      case '+':
-        addToken(TokenType.PLUS);
-        break;
-      case ';':
-        addToken(TokenType.SEMICOLON);
-        break;
-      case '*':
-        addToken(TokenType.STAR);
-        break;
+    case '(':
+      addToken(TokenType.LEFT_PAREN);
+      break;
+    case ')':
+      addToken(TokenType.RIGHT_PAREN);
+      break;
+    case '{':
+      addToken(TokenType.LEFT_BRACE);
+      break;
+    case '}':
+      addToken(TokenType.RIGHT_BRACE);
+      break;
+    case ',':
+      addToken(TokenType.COMMA);
+      break;
+    case '.':
+      addToken(TokenType.DOT);
+      break;
+    case '-':
+      addToken(TokenType.MINUS);
+      break;
+    case '+':
+      addToken(TokenType.PLUS);
+      break;
+    case ';':
+      addToken(TokenType.SEMICOLON);
+      break;
+    case '*':
+      addToken(TokenType.STAR);
+      break;
 
-      // Two Characters
-      case '!':
-        addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
-      case '=':
-        addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
-      case '<':
-        addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
-      case '>':
-        addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
-      case '/':
-        if (match('/')) {
-          while (peek() != '\n' && !isAtEnd())
-            advance();
-        } else {
-          addToken(TokenType.SLASH);
-        }
+    // Two Characters
+    case '!':
+      addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+      break;
+    case '=':
+      addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+      break;
+    case '<':
+      addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+      break;
+    case '>':
+      addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+      break;
+    case '/':
+      if (match('/')) {
+        while (peek() != '\n' && !isAtEnd())
+          advance();
+      } else {
+        addToken(TokenType.SLASH);
+      }
 
-      case ' ':
-      case '\r':
-      case '\t':
-        break;
-      case '\n':
-        line++;
-      case '"':
-        string();
-        break;
-      default:
-        if (isDigit(c)) {
-          number();
-        } else if (isAlpha(c)) {
-          identifier();
-        } else {
+    case ' ':
+    case '\r':
+    case '\t':
+      break;
+    case '\n':
+      line++;
+    case '"':
+      string();
+      break;
+    default:
+      if (isDigit(c)) {
+        number();
+      } else if (isAlpha(c)) {
+        identifier();
+      } else {
 
-          Lox.error(line, "Unexpected Character.");
-        }
-        break;
+        Lox.error(line, "Unexpected Character.");
+      }
+      break;
     }
-  }
-
-  private boolean isDigit(char c) {
-    return c >= '0' && c <= '9';
   }
 
   private void number() {
@@ -134,7 +132,8 @@ class Scanner {
         advance();
     }
 
-    addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, current)));
+    addToken(TokenType.NUMBER,
+             Double.parseDouble(source.substring(start, current)));
   }
 
   private void string() {
@@ -149,6 +148,10 @@ class Scanner {
       return;
     }
     advance();
+
+    // trim the surrounding quotes
+    String value = source.substring(start + 1, current - 1);
+    addToken(TokenType.STRING, value);
   }
 
   private char peek() {
@@ -173,39 +176,34 @@ class Scanner {
   }
 
   private void identifier() {
+    // while the next char is isAlphaNumberic, advance the forward pointer
     while (isAlphaNumberic(peek()))
       advance();
+    // once the next char is not isAlphaNumberic then get substring
     String text = source.substring(start, current);
+    System.out.println(text);
     TokenType type = keywords.get(text);
     if (type == null)
       type = TokenType.IDENTIFIER;
     addToken(type);
-
-    addToken(TokenType.IDENTIFIER);
   }
 
   private boolean isAlpha(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
   }
 
-  private boolean isAlphaNumberic(char c) {
-    return isAlpha(c) || isDigit(c);
-  }
+  private boolean isDigit(char c) { return c >= '0' && c <= '9'; }
 
-  private char advance() {
-    return source.charAt(current++);
-  }
+  private boolean isAlphaNumberic(char c) { return isAlpha(c) || isDigit(c); }
 
-  private void addToken(TokenType type) {
-    addToken(type, null);
-  }
+  private char advance() { return source.charAt(current++); }
+
+  private void addToken(TokenType type) { addToken(type, null); }
 
   private void addToken(TokenType type, Object literal) {
     String text = source.substring(start, current);
     tokens.add(new Token(type, text, literal, line));
   }
 
-  private boolean isAtEnd() {
-    return current >= source.length();
-  }
+  private boolean isAtEnd() { return current >= source.length(); }
 }
