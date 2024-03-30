@@ -106,6 +106,7 @@ class Scanner {
       break;
     case '\n':
       line++;
+      break;
     case '"':
       string();
       break;
@@ -115,7 +116,6 @@ class Scanner {
       } else if (isAlpha(c)) {
         identifier();
       } else {
-
         Lox.error(line, "Unexpected Character.");
       }
       break;
@@ -181,7 +181,6 @@ class Scanner {
       advance();
     // once the next char is not isAlphaNumberic then get substring
     String text = source.substring(start, current);
-    System.out.println(text);
     TokenType type = keywords.get(text);
     if (type == null)
       type = TokenType.IDENTIFIER;
@@ -201,8 +200,7 @@ class Scanner {
   private void addToken(TokenType type) { addToken(type, null); }
 
   private void addToken(TokenType type, Object literal) {
-    String text = source.substring(start, current);
-    tokens.add(new Token(type, text, literal, line));
+    String text = source.substring(start, current); tokens.add(new Token(type, text, literal, line));
   }
 
   private boolean isAtEnd() { return current >= source.length(); }

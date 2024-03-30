@@ -1,2 +1,10 @@
 var language = "lox";
 var age = 59;
+var float = 5.9;
+var solution = 4 / 6;
+var math = 6 -1 * 4.43;
+var bool = false;
+bool = age >= float;
+var isold = age < 30;
+// comment
+print("Hello World!");

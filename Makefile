@@ -1,14 +1,16 @@
 JAVA_VERSION = 17
 JAVAC=javac
 JAVA=java
-JAVA_COMPILE_OPTIONS = --enable-preview --release $(JAVA_VERSION)
-JAVA_OPTIONS = --enable-preview
+# -g debuggin information
+JAVA_COMPILE_OPTIONS = -g --release $(JAVA_VERSION)
+JAVA_OPTIONS =
 
 SRC=$(wildcard src/main/java/jlox/*.java)
 CLASSPATH=classes
 MAIN_CLASS=jlox.Lox
 
 default: compile
+
 compile: $(CLASSPATH)
 	$(JAVAC) $(SRC) -d $(CLASSPATH)
 
