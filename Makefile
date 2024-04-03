@@ -5,7 +5,7 @@ JAVA=java
 JAVA_COMPILE_OPTIONS = -g --release $(JAVA_VERSION)
 JAVA_OPTIONS =
 
-SRC=$(wildcard src/main/java/jlox/*.java)
+SRC=$(shell find src -name "*.java")
 CLASSPATH=classes
 MAIN_CLASS=jlox.Lox
 
