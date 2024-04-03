@@ -1,1 +1,8 @@
 classes/
+/Expr.java
+/GPATH
+/GTAGS
+/gen_tags.sh
+/lox/*.lox
+/GRTAGS
+/.session
