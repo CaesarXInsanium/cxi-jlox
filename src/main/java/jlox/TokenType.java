@@ -1,6 +1,6 @@
 package jlox;
 
-enum TokenType {
+public enum TokenType {
   // Single Char
   LEFT_PAREN,
   RIGHT_PAREN,
@@ -47,5 +47,4 @@ enum TokenType {
   WHILE,
 
   EOF
-
 }

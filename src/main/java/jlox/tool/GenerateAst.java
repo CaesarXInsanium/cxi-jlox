@@ -31,7 +31,7 @@ public class GenerateAst {
     writer.println();
     writer.println("import java.util.List;");
     writer.println();
-    writer.println("abstract class " + baseName + " {");
+    writer.println("public abstract class " + baseName + " {");
     defineVisitor(writer, baseName, types);
 
     for(String type: types){
@@ -52,7 +52,7 @@ public class GenerateAst {
   ) {
     writer.println("  static class " + className + " extends " + baseName + " {");
     // constructor
-    writer.println("    " + className + "(" + fieldList + ") {");
+    writer.println("    public " + className + "(" + fieldList + ") {");
     String[] fields  = fieldList.split(", ");
     for (String field : fields){
       String name = field.split(" ")[1];

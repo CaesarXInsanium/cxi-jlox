@@ -6,9 +6,12 @@ Here I am trying to learn how to write in Java programming language and
 to be able to learn how to create a programming language.
 
 This here is my progress as I follow along with the book 'Crafting Interpreter'
-nby Robert Nystrom.
+by Robert Nystrom. I have lost my drive, as I have been working on this for too long.
+I need break.
 
 I am also making a GNU Guile and Nim implementation. Check them out.
+
+Not anymore.
 
 * Progress
 

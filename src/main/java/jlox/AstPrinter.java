@@ -1,7 +1,7 @@
 package jlox;
 
 class AstPrinter implements Expr.Visitor<String> {
-
+  // (* (- 123) (group 45.67))
   public static void main(String[] argsd) {
     Expr expression = new Expr.Binary(
       new Expr.Unary(
