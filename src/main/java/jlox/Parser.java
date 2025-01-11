@@ -50,7 +50,7 @@ class Parser {
     return peek().type == type;
   }
   private Token advance(){
-    if(isAtEnd()) current++;
+    if(!isAtEnd()) current++;
     return previous();
   }
   private boolean isAtEnd(){
@@ -126,7 +126,8 @@ class Parser {
     return new ParseError();
   }
 
-
+  // on error, will discard all tokens until a semicolon is found
+  @SuppressWarnings("unused")
   private void synchronize(){
     advance();
     while(!isAtEnd()){
