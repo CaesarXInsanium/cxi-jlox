@@ -3,7 +3,7 @@ JAVAC=javac
 JAVA=java
 # -g debuggin information
 JAVA_COMPILE_OPTIONS = -g
-JAVA_OPTIONS =
+JAVA_OPTIONS = -Xlint:all -encoding utf-8
 
 SRC=$(wildcard src/main/java/jlox/*.java)
 CLASSPATH=classes
@@ -28,3 +28,6 @@ $(CLASSPATH):
 src/main/java/jlox/Expr.java: src/main/java/jlox/tool/GenerateAst.java
 	$(JAVAC) $(JAVA_COMPILE_OPTIONS)  -d $(CLASSPATH) $^
 	$(JAVA) -cp $(CLASSPATH) jlox.tool.GenerateAst src/main/java/jlox
+
+tags: $(SRC)
+	fd --extension java | ctags -
