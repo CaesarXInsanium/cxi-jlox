@@ -3,7 +3,7 @@ import java.lang.Exception;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Vector;
 
 public class GenerateAst {
   public static void main(String[] args) throws IOException {
@@ -12,16 +12,25 @@ public class GenerateAst {
       System.exit(64);
     }
     String outputDir = args[0];
-    defineAst(outputDir, "Expr", Arrays.asList(
+    String []exprRules = new String[]{
       "Binary   : Expr left, Token operator, Expr right",
       "Grouping : Expr expression",
       "Literal  : Object value",
       "Unary    : Token operator, Expr right"
-    ));
+    };
+
+    defineAst(outputDir, "Expr", exprRules);
+
+    String stmtRules[] = new String[]{
+          "Expression : Expr expression",
+          "Print : Expr expression"
+    };
+
+    defineAst(outputDir, "Stmt", stmtRules);
   }
   
   public static void defineAst(
-    String outputDir, String baseName, List<String> types
+    String outputDir, String baseName, String[] types
   ) throws IOException {
     // TODO: check if proper target directory exists
     // delete all files in directory if they are found
@@ -77,7 +86,7 @@ public class GenerateAst {
   }
 
   private static void defineVisitor(
-    PrintWriter writer, String baseName, List<String> types
+    PrintWriter writer, String baseName, String[] types
   ) {
     writer.println("  interface Visitor<R> {");
     for (String type: types ) {

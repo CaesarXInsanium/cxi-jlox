@@ -1,32 +1,53 @@
 package jlox;
 
+import java.util.Vector;
 import java.util.List;
 
 import static jlox.TokenType.*;
+import jlox.Stmt;
 import jlox.Token;
 import jlox.Expr;
 
 class Parser {
   private static class ParseError extends RuntimeException{}
-  private final List<Token> tokens;
+  private final Vector<Token> tokens;
   private int current = 0;
 
-  Parser(List<Token> tokens){
+  Parser(Vector<Token> tokens){
     this.tokens = tokens;
   }
 
-  Expr parse(){
-    try{
-      return expression();
-    }catch(ParseError error){
-      return null;
+  Vector<Stmt> parse() {
+    Vector<Stmt> statements = new Vector<Stmt>();
+    while(!isAtEnd()){
+      statements.add(statement());
     }
+    return statements;
   }
 
   private Expr expression(){
     return equality();
   }
 
+  // Statements
+  private Stmt statement(){
+    if(match(PRINT)) return printStatement();
+    return expressionStatement();
+  }
+
+  private Stmt printStatement(){
+    Expr value = expression();
+    consume(SEMICOLON, "Expect ';' after value");
+    return new Stmt.Print(value);
+  }
+
+  private Stmt expressionStatement(){
+    Expr expr = expression();
+    consume(SEMICOLON, "Expect ';' after expression]");
+    return new Stmt.Expression(expr);
+  }
+
+  // Expressions
   private Expr equality(){
     Expr expr = comparison();
     while (match(BANG_EQUAL, EQUAL_EQUAL)){
@@ -148,4 +169,5 @@ class Parser {
       advance();
     }
   }
+
 }

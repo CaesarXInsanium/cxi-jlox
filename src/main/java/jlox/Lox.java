@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Vector;
 import java.util.stream.Stream;
 
 public class Lox {
@@ -58,16 +59,16 @@ public class Lox {
 
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.scanTokens();
+        Vector<Token> tokens = scanner.scanTokens();
         for (Token token : tokens) {
             System.out.println(token);
         }
 
         Parser parser  = new Parser(tokens);
-        Expr expression = parser.parse();
+        Vector<Stmt> statements  = parser.parse();
         if (hadError) return;
         // System.out.println(new AstPrinter().print(expression));
-        interpreter.interpret(expression);
+        interpreter.interpret(statements);
     }
 
     static void error(int line, String message) {
@@ -76,7 +77,7 @@ public class Lox {
 
 
     private static void report(int line, String where, String message) {
-        System.err.println("[line " + line + "] Error" + where + ": " + message);
+        System.err.println("[line " + line + "] Error " + where + ": " + message);
         hadError = true;
     }
     static void error(Token token, String message){

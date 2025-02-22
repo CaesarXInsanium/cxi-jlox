@@ -1,6 +1,6 @@
 package jlox;
 
-import java.util.ArrayList;
+import java.util.Vector;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +9,7 @@ import jlox.TokenType;
 
 class Scanner {
   private final String source;
-  private final List<Token> tokens = new ArrayList<>();
+  private final Vector<Token> tokens = new Vector<Token>();
   private int start = 0;
   private int current = 0;
   private int line = 0;
@@ -36,7 +36,7 @@ class Scanner {
 
   Scanner(String source) { this.source = source; }
 
-  public List<Token> scanTokens() {
+  public Vector<Token> scanTokens() {
     while (!isAtEnd()) {
       start = current;
       scanToken();
