@@ -99,7 +99,7 @@ class Scanner {
       } else {
         addToken(TokenType.SLASH);
       }
-
+      break;
     case ' ':
     case '\r':
     case '\t':

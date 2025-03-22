@@ -67,7 +67,6 @@ public class Lox {
         Parser parser  = new Parser(tokens);
         Vector<Stmt> statements  = parser.parse();
         if (hadError) return;
-        // System.out.println(new AstPrinter().print(expression));
         interpreter.interpret(statements);
     }
 

@@ -1,4 +1,5 @@
 package jlox;
+import jlox.Expr;
 
 class AstPrinter implements Expr.Visitor<String> {
   // (* (- 123) (group 45.67))
