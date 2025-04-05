@@ -9,7 +9,9 @@ import jlox.Token;
 import jlox.Expr;
 
 class Parser {
-  private static class ParseError extends RuntimeException{}
+  private static class ParseError extends RuntimeException{
+    private static final long serialVersionUID = 42L;
+  }
   private final Vector<Token> tokens;
   private int current = 0;
 
