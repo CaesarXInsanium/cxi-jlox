@@ -33,7 +33,7 @@ src/main/java/jlox/Expr.java: src/main/java/jlox/tool/GenerateAst.java
 src/main/java/jlox/Stmt.java: src/main/java/jlox/Expr.java
 
 tags: $(SRC)
-	fd --extension java | ctags -
+	fd --extension java | xargs ctags
 
 lox.jar: compile
 	jar -e jlox.Lox -c lox.jar -C $(CLASSPATH)  
