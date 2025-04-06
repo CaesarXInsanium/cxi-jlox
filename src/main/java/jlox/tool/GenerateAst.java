@@ -16,14 +16,16 @@ public class GenerateAst {
       "Binary   : Expr left, Token operator, Expr right",
       "Grouping : Expr expression",
       "Literal  : Object value",
-      "Unary    : Token operator, Expr right"
+      "Unary    : Token operator, Expr right",
+      "Variable : Token name"
     };
 
     defineAst(outputDir, "Expr", exprRules);
 
     String stmtRules[] = new String[]{
           "Expression : Expr expression",
-          "Print : Expr expression"
+          "Print : Expr expression",
+          "Var : Token name, Expr initializer"
     };
 
     defineAst(outputDir, "Stmt", stmtRules);
