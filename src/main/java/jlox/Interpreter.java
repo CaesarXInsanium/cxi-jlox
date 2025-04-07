@@ -107,6 +107,10 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     enviroment.define(stmt.name.lexeme, value);
     return null;
   }
+  @Override
+  public Void visitVariableExpr(Expr.Variable expr){
+    return enviroment.get(expr.name);
+  }
 
   private boolean isTruthy(Object object){
     if(object ==null) return false;
