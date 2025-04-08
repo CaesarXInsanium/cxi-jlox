@@ -24,9 +24,10 @@ public class GenerateAst {
     defineAst(outputDir, "Expr", exprRules);
 
     String stmtRules[] = new String[]{
+          "Block      : Vector<Stmt> statements",
           "Expression : Expr expression",
-          "Print : Expr expression",
-          "Var : Token name, Expr initializer"
+          "Print      : Expr expression",
+          "Var        : Token name, Expr initializer"
     };
 
     defineAst(outputDir, "Stmt", stmtRules);
@@ -41,7 +42,7 @@ public class GenerateAst {
     PrintWriter writer = new PrintWriter(path, "UTF-8");
     writer.println("package jlox;");
     writer.println();
-    writer.println("import java.util.List;");
+    writer.println("import java.util.Vector;");
     writer.println();
     writer.println("public abstract class " + baseName + " {");
     defineVisitor(writer, baseName, types);

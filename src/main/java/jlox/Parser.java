@@ -35,6 +35,7 @@ class Parser {
   // Statements
   private Stmt statement() {
     if (match(PRINT)) return printStatement();
+    if (match(LEFT_BRACE)) return new Stmt.Block(block());
 
     return expressionStatement();
   }
@@ -69,6 +70,15 @@ class Parser {
     Expr expr = expression();
     consume(SEMICOLON, "Expect ';' after expression]");
     return new Stmt.Expression(expr);
+  }
+
+  private Vector<Stmt> block(){
+    Vector<Stmt> statements = new Vector<Stmt>();
+    while (!check(RIGHT_BRACE) && !isAtEnd()){
+      statements.add(declaration());
+    }
+    consume(RIGHT_BRACE, "Expect } after a block.");
+    return statements;
   }
 
   private Expr assignment(){
