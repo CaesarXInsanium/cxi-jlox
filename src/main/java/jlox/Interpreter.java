@@ -98,6 +98,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     System.out.println(stringify(value));
     return null;
   }
+
   @Override
   public Void visitVarStmt(Stmt.Var stmt){
     Object value = null;
@@ -108,8 +109,10 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     return null;
   }
   @Override
-  public Void visitVariableExpr(Expr.Variable expr){
-    return enviroment.get(expr.name);
+  public Object visitAssignExpr(Expr.Assign expr){
+    Object value = evaluate(expr.value);
+    enviroment.assign(expr.name, value);
+    return value;
   }
 
   private boolean isTruthy(Object object){
