@@ -1,9 +1,9 @@
 package jlox;
 
-import java.util.Vector;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import jlox.Token;
 import jlox.TokenType;
 
@@ -200,7 +200,8 @@ class Scanner {
   private void addToken(TokenType type) { addToken(type, null); }
 
   private void addToken(TokenType type, Object literal) {
-    String text = source.substring(start, current); tokens.add(new Token(type, text, literal, line));
+    String text = source.substring(start, current);
+    tokens.add(new Token(type, text, literal, line));
   }
 
   private boolean isAtEnd() { return current >= source.length(); }
