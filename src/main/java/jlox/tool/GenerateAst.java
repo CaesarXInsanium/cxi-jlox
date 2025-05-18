@@ -1,33 +1,38 @@
 package jlox.tool;
-import java.lang.Exception;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.Exception;
 import java.util.Arrays;
 import java.util.Vector;
 
 public class GenerateAst {
   public static void main(String[] args) throws IOException {
-    if (args.length!= 1) {
+    if (args.length != 1) {
       System.err.println("Usage: generate_ast <outputdir>");
       System.exit(64);
     }
     String outputDir = args[0];
+    // clang-format off
     String []exprRules = new String[]{
       "Assign   : Token name, Expr value",
       "Binary   : Expr left, Token operator, Expr right",
       "Grouping : Expr expression",
       "Literal  : Object value",
+      "Logical  : Expr left, Token operator, Expr right",
       "Unary    : Token operator, Expr right",
       "Variable : Token name"
     };
 
     defineAst(outputDir, "Expr", exprRules);
 
+    // clang-format off
     String stmtRules[] = new String[]{
-          "Block      : Vector<Stmt> statements",
-          "Expression : Expr expression",
-          "Print      : Expr expression",
-          "Var        : Token name, Expr initializer"
+      "Block      : Vector<Stmt> statements",
+      "Expression : Expr expression",
+      "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
+      "Print      : Expr expression",
+      "Var        : Token name, Expr initializer",
+      "While      : Expr condition, Stmt body"
     };
 
     defineAst(outputDir, "Stmt", stmtRules);
