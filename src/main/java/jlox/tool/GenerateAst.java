@@ -16,6 +16,7 @@ public class GenerateAst {
     String []exprRules = new String[]{
       "Assign   : Token name, Expr value",
       "Binary   : Expr left, Token operator, Expr right",
+      "Call     : Expr callee, Token paren, Vector<Expr> arguments",
       "Grouping : Expr expression",
       "Literal  : Object value",
       "Logical  : Expr left, Token operator, Expr right",

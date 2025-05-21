@@ -91,6 +91,29 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     return null;
   }
 
+  @Override
+  public Object visitCallExpr(Expr.Call expr) {
+    Object callee = evaluate(expr.callee);
+    Vector<Object> arguments = new Vector<Object>();
+    for (Expr arg : expr.arguments) {
+      arguments.add(evaluate(arg));
+    }
+
+    if (!(callee instanceof LoxCallable)) {
+      throw new RuntimeError(expr.paren,
+                             "Can only call functions and classes.");
+    }
+
+    LoxCallable function = (LoxCallable)callee;
+
+    if (arguments.size() != function.arity()) {
+      throw new RuntimeError(
+          expr.paren, "Expected " + function.arity() + " arguments got " +
+                          arguments.size() + " arguments instead.");
+    }
+    return function.call(this, arguments);
+  }
+
   private Object evaluate(Expr expr) { return expr.accept(this); }
   private void execute(Stmt stmt) { stmt.accept(this); }
 
