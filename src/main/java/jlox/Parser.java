@@ -37,6 +37,8 @@ class Parser {
       return ifStatement();
     if (match(PRINT))
       return printStatement();
+    if (match(RETURN))
+      return returnStatement();
     if (match(WHILE))
       return whileStatement();
     if (match(LEFT_BRACE))
@@ -106,6 +108,8 @@ class Parser {
 
   private Stmt declaration() {
     try {
+      if (match(FUN))
+        return function("function");
       if (match(VAR))
         return varDeclaration();
       return statement();
@@ -119,6 +123,16 @@ class Parser {
     Expr value = expression();
     consume(SEMICOLON, "Expect ';' after value");
     return new Stmt.Print(value);
+  }
+
+  private Stmt returnStatement() {
+    Token keyword = previous();
+    Expr value = null;
+    if (!check(SEMICOLON)) {
+      value = expression();
+    }
+    consume(SEMICOLON, "Expect ';' after a return expression.");
+    return new Stmt.Return(keyword, value);
   }
 
   private Stmt varDeclaration() {
@@ -143,6 +157,25 @@ class Parser {
     Expr expr = expression();
     consume(SEMICOLON, "Expect ';' after expression]");
     return new Stmt.Expression(expr);
+  }
+
+  private Stmt.Function function(String kind) {
+    Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+    consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
+
+    Vector<Token> parameters = new Vector<Token>();
+    if (!check(RIGHT_PAREN)) {
+      do {
+        if (parameters.size() >= 255) {
+          error(peek(), "Can't have more than 255 parameters.");
+        }
+        parameters.add(consume(IDENTIFIER, "Expect parameters name."));
+      } while (match(COMMA));
+    }
+    consume(RIGHT_PAREN, "Expect ')' to mark end of function parameters.");
+    consume(LEFT_BRACE, "Expect '{' to mark start of function body.");
+    Vector<Stmt> body = block();
+    return new Stmt.Function(name, parameters, body);
   }
 
   private Vector<Stmt> block() {

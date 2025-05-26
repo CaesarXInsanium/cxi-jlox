@@ -4,7 +4,26 @@ import java.util.Vector;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
-  private Enviroment enviroment = new Enviroment();
+  final Enviroment globals = new Enviroment();
+  private Enviroment enviroment = globals;
+
+  Interpreter() {
+    // anonymous Java class
+    globals.define("clock", new LoxCallable() {
+      @Override
+      public int arity() {
+        return 0;
+      }
+      @Override
+      public Object call(Interpreter interpreter, Vector<Object> arguments) {
+        return (double)System.currentTimeMillis() / 1000.0;
+      }
+      @Override
+      public String toString() {
+        return "<native fn>";
+      }
+    });
+  }
 
   @Override
   public Object visitLiteralExpr(Expr.Literal expr) {
@@ -142,6 +161,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     return null;
   }
   @Override
+  public Void visitFunctionStmt(Stmt.Function stmt) {
+    LoxFunction function = new LoxFunction(stmt, this.enviroment);
+    enviroment.define(stmt.name.lexeme, function);
+    return null;
+  }
+  @Override
   public Void visitIfStmt(Stmt.If stmt) {
     if (isTruthy(evaluate(stmt.condition))) {
       execute(stmt.thenBranch);
@@ -156,6 +181,13 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     Object value = evaluate(stmt.expression);
     System.out.println(stringify(value));
     return null;
+  }
+  @Override
+  public Void visitReturnStmt(Stmt.Return stmt) {
+    Object value = null;
+    if (stmt.value != null)
+      value = evaluate(stmt.value);
+    throw new Return(value);
   }
 
   @Override
