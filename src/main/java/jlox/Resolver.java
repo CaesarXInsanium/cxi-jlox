@@ -9,7 +9,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   private final Interpreter interpreter;
   private final Stack<Map<String, Boolean>> scopes = new Stack<>();
 
-  Resolver(Interpreter intepreter) { this.interpreter = interpreter; }
+  Resolver(Interpreter interpreter) { this.interpreter = interpreter; }
 
   @Override
   public Void visitBlockStmt(Stmt.Block stmt) {
@@ -87,6 +87,11 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     return null;
   }
   @Override
+  public Void visitGroupingExpr(Expr.Grouping expr) {
+    resolve(expr.expression);
+    return null;
+  }
+  @Override
   public Void visitLiteralExpr(Expr.Literal expr) {
     return null;
   }
@@ -110,8 +115,13 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     resolveLocal(expr, expr.name);
     return null;
   }
-  private void resolve(Stmt stmt) { stmt.accept(this); }
-  private void resolve(Expr expr) { expr.accept(this); }
+  void resolve(Stmt stmt) { stmt.accept(this); }
+  void resolve(Expr expr) { expr.accept(this); }
+  void resolve(Vector<Stmt> statements) {
+    for (Stmt stmt : statements) {
+      resolve(stmt);
+    }
+  }
   private void resolveFunction(Stmt.Function function) {
     beginScope();
     for (Token param : function.params) {

@@ -1,11 +1,14 @@
 package jlox;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
   final Enviroment globals = new Enviroment();
   private Enviroment enviroment = globals;
+  private final Map<Expr, Integer> locals = new HashMap<>();
 
   Interpreter() {
     // anonymous Java class
@@ -61,7 +64,16 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
   @Override
   public Object visitVariableExpr(Expr.Variable expr) {
-    return enviroment.get(expr.name);
+    return lookUpVariable(expr.name, expr);
+  }
+
+  private Object lookUpVariable(Token name, Expr expr) {
+    Integer distance = locals.get(expr);
+    if (distance != null) {
+      return enviroment.getAt(distance, name.lexeme);
+    } else {
+      return globals.get(name);
+    }
   }
 
   @Override
@@ -135,6 +147,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
   private Object evaluate(Expr expr) { return expr.accept(this); }
   private void execute(Stmt stmt) { stmt.accept(this); }
+  void resolve(Expr expr, int depth) { locals.put(expr, depth); }
 
   void executeBlock(Vector<Stmt> statements, Enviroment enviroment) {
     Enviroment previous = this.enviroment;
@@ -210,7 +223,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   @Override
   public Object visitAssignExpr(Expr.Assign expr) {
     Object value = evaluate(expr.value);
-    enviroment.assign(expr.name, value);
+    Integer distance = locals.get(expr);
+    if (distance != null) {
+      enviroment.assignAt(distance, expr.name, value);
+    } else {
+      globals.assign(expr.name, value);
+    }
     return value;
   }
 

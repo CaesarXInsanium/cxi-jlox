@@ -69,6 +69,8 @@ public class Lox {
     Vector<Stmt> statements = parser.parse();
     if (hadError)
       return;
+    Resolver resolver = new Resolver(interpreter);
+    resolver.resolve(statements);
     interpreter.interpret(statements);
   }
 
