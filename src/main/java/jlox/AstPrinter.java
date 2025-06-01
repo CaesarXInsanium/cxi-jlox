@@ -12,6 +12,22 @@ class AstPrinter implements Expr.Visitor<String> {
     System.out.println(new AstPrinter().print(expression));
   }
   String print(Expr expr) { return expr.accept(this); }
+  @Override
+  public String visitSuperExpr(Expr.Super expr) {
+    return new String();
+  }
+  @Override
+  public String visitSetExpr(Expr.Set expr) {
+    return "set_expression";
+  }
+  @Override
+  public String visitGetExpr(Expr.Get expr) {
+    return "get_expression";
+  }
+  @Override
+  public String visitThisExpr(Expr.This expr) {
+    return "this_expression";
+  }
 
   @Override
   public String visitBinaryExpr(Expr.Binary expr) {

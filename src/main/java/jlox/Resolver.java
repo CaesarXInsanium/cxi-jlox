@@ -10,7 +10,10 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   private enum FunctionType {
     NONE,
     FUNCTION,
+    METHOD,
   }
+  private enum ClassType { NONE, CLASS, SUBCLASS }
+  private ClassType currentClass = ClassType.NONE;
   private final Interpreter interpreter;
   private final Stack<Map<String, Boolean>> scopes = new Stack<>();
   private FunctionType currentFunction = FunctionType.NONE;
@@ -22,6 +25,35 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     beginScope();
     resolve(stmt.statements);
     endScope();
+    return null;
+  }
+  @Override
+  public Void visitClassStmt(Stmt.Class stmt) {
+    ClassType enclosingClass = this.currentClass;
+    this.currentClass = ClassType.CLASS;
+    declare(stmt.name);
+    define(stmt.name);
+    if (stmt.superclass != null &&
+        stmt.name.lexeme.equals(stmt.superclass.name.lexeme)) {
+      Lox.error(stmt.superclass.name, "A class cannot inherit from itself.");
+    }
+    if (stmt.superclass != null) {
+      currentClass = ClassType.SUBCLASS;
+      resolve(stmt.superclass);
+    }
+
+    if (stmt.superclass != null) {
+      beginScope();
+      scopes.peek().put("super", true);
+    }
+    beginScope();
+    scopes.peek().put("this", true);
+    for (Stmt.Function method : stmt.methods) {
+      FunctionType declaration = FunctionType.METHOD;
+      resolveFunction(method, declaration);
+    }
+    endScope();
+    currentClass = enclosingClass;
     return null;
   }
   @Override
@@ -96,6 +128,11 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     return null;
   }
   @Override
+  public Void visitGetExpr(Expr.Get expr) {
+    resolve(expr.object);
+    return null;
+  }
+  @Override
   public Void visitGroupingExpr(Expr.Grouping expr) {
     resolve(expr.expression);
     return null;
@@ -108,6 +145,33 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   public Void visitLogicalExpr(Expr.Logical expr) {
     resolve(expr.left);
     resolve(expr.right);
+    return null;
+  }
+  @Override
+  public Void visitSetExpr(Expr.Set expr) {
+    resolve(expr.value);
+    resolve(expr.object);
+    return null;
+  }
+  @Override
+  public Void visitSuperExpr(Expr.Super expr) {
+    if (currentClass == ClassType.NONE) {
+      Lox.error(expr.keyword,
+                "Can't use 'super' outside of class declaration.");
+    } else if (currentClass != ClassType.SUBCLASS) {
+      Lox.error(expr.keyword,
+                "Can't use 'super' in a class with no superclass");
+    }
+    resolveLocal(expr, expr.keyword);
+    return null;
+  }
+  @Override
+  public Void visitThisExpr(Expr.This expr) {
+    if (currentClass == ClassType.NONE) {
+      Lox.error(expr.keyword, "Can't use 'this' outside of class method body.");
+      return null;
+    }
+    resolveLocal(expr, expr.keyword);
     return null;
   }
   @Override
